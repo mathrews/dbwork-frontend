@@ -4,8 +4,10 @@ const host = import.meta.env.VITE_DB_API_HOST;
 const port = import.meta.env.VITE_DB_API_PORT=3000;
 const API_URL = `http://${host}:${port}/api`;
 
-export async function getAllClients() : Promise<Client[]> {
-	const res = await fetch(`${API_URL}/clientes`);
+export async function getClients(filter: boolean) : Promise<Client[]> {
+	const res = await fetch(
+		(filter) ? `${API_URL}/clientes/ativos` :
+			`${API_URL}/clientes`);
 
 	if (!res.ok) {
 		throw new Error('Erro ao buscar os clientes')

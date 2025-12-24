@@ -3,15 +3,16 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import type { Client } from '../types/Client';
-import {getAllClients, deleteClient} from '../db_api/db_api';
+import {getClients, deleteClient} from '../db_api/db_api';
 
 
 const ClientTablePage = () => {
 
 	const [clients, setClients] = useState<Client[]>([]);
+	const [ativos, setAtivos] = useState<boolean>(true);
 
 	useEffect(() => {
-		getAllClients().then(setClients)
+		getClients(ativos).then(setClients)
 	}, []);
 
 	const handleDelete = async (rowData: Client) => {
@@ -21,7 +22,7 @@ const ClientTablePage = () => {
 		try {
 			console.log('Deleting:', rowData.id);
 			await deleteClient(rowData.id)
-			const newClients = await getAllClients()
+			const newClients = await getClients(ativos)
 			setClients(newClients)
 		} catch (e) {
 			console.error('Fail:', e)
@@ -57,6 +58,23 @@ const ClientTablePage = () => {
 
 	return (
 		<>
+		<label>
+			Apenas clientes ativos?
+			<input
+				type="checkbox"
+				name="checkativos"
+				defaultChecked={true}
+				onChange={
+					// TOFIX: DOESN'T WORK
+					async e => {
+						setAtivos(Boolean(e.target.value))
+						const newClients = await getClients(ativos)
+						setClients(newClients)
+					}
+				}
+			/>
+		</label>
+
 		<div style={{
 			display: 'flex', // Enable flexbox for the parent div
 			gap: '20px',    // Set the gap between child elements
