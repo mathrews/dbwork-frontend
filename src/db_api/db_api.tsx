@@ -6,7 +6,7 @@ const API_URL = `http://${host}:${port}/api`;
 
 export async function getClients(filter: boolean) : Promise<Client[]> {
 	const res = await fetch(
-		(filter) ? `${API_URL}/clientes/ativos` :
+		(filter) ? `${API_URL}/clientes?ativos=1` :
 			`${API_URL}/clientes`);
 
 	if (!res.ok) {
