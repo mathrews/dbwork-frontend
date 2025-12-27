@@ -67,7 +67,7 @@ const ClientTablePage = () => {
 				onChange={
 					// TOFIX: DOESN'T WORK
 					async e => {
-						setAtivos(Boolean(e.target.value))
+						setAtivos(Boolean(e.target.checked))
 						const newClients = await getClients(ativos)
 						setClients(newClients)
 					}
