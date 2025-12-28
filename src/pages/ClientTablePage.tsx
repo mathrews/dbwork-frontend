@@ -13,7 +13,7 @@ const ClientTablePage = () => {
 
 	useEffect(() => {
 		getClients(ativos).then(setClients)
-	}, []);
+	}, [ativos]);
 
 	const handleDelete = async (rowData: Client) => {
 		// Isso aqui, na verdade, só faz com que o cliente seja marcado
