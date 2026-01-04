@@ -2,102 +2,131 @@ import { useState, useEffect } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-import type { Client } from '../types/Client';
-import {getClients, deleteClient} from '../db_api/db_api';
-
+import type { Client, ClientCreate } from '../types/Client';
+import { getClients, deleteClient, createClient } from '../db_api/db_api';
+import { Dialog } from 'primereact/dialog';
+import { InputText } from 'primereact/inputtext';
 
 const ClientTablePage = () => {
-
 	const [clients, setClients] = useState<Client[]>([]);
 	const [ativos, setAtivos] = useState<boolean>(true);
+	const [showDialog, setShowDialog] = useState(false);
+	const [novoCliente, setNovoCliente] = useState<ClientCreate>({
+		nome: '',
+		email: '',
+		telefone: '',
+		cidade: '',
+		estado: '',
+	});
 
 	useEffect(() => {
-		getClients(ativos).then(setClients)
+		getClients(ativos).then(setClients);
 	}, [ativos]);
 
 	const handleDelete = async (rowData: Client) => {
-		// Isso aqui, na verdade, só faz com que o cliente seja marcado
-		// como inativo.
-		// Filtrar as respostas no back-end???
 		try {
-			console.log('Deleting:', rowData.id);
-			await deleteClient(rowData.id)
-			const newClients = await getClients(ativos)
-			setClients(newClients)
+			await deleteClient(rowData.id);
+			const newClients = await getClients(ativos);
+			setClients(newClients);
 		} catch (e) {
-			console.error('Fail:', e)
+			console.error('Falha ao deletar:', e);
 		}
 	};
 
-	const handleUpdate = (rowData: Client) => {
-		console.log('Uploading for:', rowData.id);
-		// Implement your upload logic here
-	};
+	const handleCreate = async () => {
+  if (!novoCliente.nome || !novoCliente.email) {
+    alert('Nome e email são obrigatórios!');
+    return;
+  }
 
-	const actionBodyTemplate = (rowData: Client) => {
-		return (
-			<>
-			<div style={{
-				display: 'flex', // Enable flexbox for the parent div
-				gap: '20px',    // Set the gap between child elements
-			}}>
-			<Button
-			icon="pi pi-trash"
-			className="p-button-danger p-mr-2"
-			onClick={() => handleDelete(rowData)}
-			/>
-			<Button
-			icon="pi pi-pencil"
-			className="p-button-success"
-			onClick={() => handleUpdate(rowData)}
-			/>
-			</div>
-			</>
-		);
-	};
+  try {
+    // Cria cliente no backend
+    await createClient({ ...novoCliente, ativo: true });
+
+    // Atualiza tabela sem depender de getClients imediatamente
+    setClients(prev => [
+      ...prev,
+      {
+        ...novoCliente,
+        id: Date.now(), // ID temporário; backend deve retornar real se quiser
+        data_cadastro: new Date().toISOString(),
+        ativo: true,
+      },
+    ]);
+
+    // Fecha o diálogo e limpa o formulário
+    setShowDialog(false);
+    setNovoCliente({ nome: '', email: '', telefone: '', cidade: '', estado: '' });
+  } catch (e) {
+    console.error('Erro ao criar cliente:', e);
+    alert('Falha ao criar cliente!');
+  }
+};
+
+
+	const actionBodyTemplate = (rowData: Client) => (
+		<div style={{ display: 'flex', gap: '20px' }}>
+			<Button icon="pi pi-trash" className="p-button-danger" onClick={() => handleDelete(rowData)} />
+			<Button icon="pi pi-pencil" className="p-button-success" onClick={() => console.log('Editar', rowData.id)} />
+		</div>
+	);
 
 	return (
 		<>
-		<label>
-			Apenas clientes ativos?
-			<input
-				type="checkbox"
-				name="checkativos"
-				defaultChecked={true}
-				onChange={
-					// TOFIX: DOESN'T WORK
-					async e => {
-						setAtivos(Boolean(e.target.checked))
-						const newClients = await getClients(ativos)
-						setClients(newClients)
-					}
-				}
-			/>
-		</label>
+			<label>
+				Apenas clientes ativos?
+				<input
+					type="checkbox"
+					name="checkativos"
+					checked={ativos}
+					onChange={async e => setAtivos(e.target.checked)}
+				/>
+			</label>
 
-		<div style={{
-			display: 'flex', // Enable flexbox for the parent div
-			gap: '20px',    // Set the gap between child elements
-			height: "8rem",
-			alignItems: "center"
-		}}>
-		<h1>Tabela de Clientes</h1>
-		<Button label='Adicionar'></Button>
-		</div>
+			<div style={{ display: 'flex', gap: '20px', height: '8rem', alignItems: 'center' }}>
+				<h1>Tabela de Clientes</h1>
+				<Button label="Adicionar" onClick={() => setShowDialog(true)} />
+			</div>
 
-		<DataTable value={clients} paginator rows={10} stripedRows tableStyle={{ minWidth: '50rem' }}>
-		<Column field="id" header="ID"></Column>
-		<Column field="nome" header="Nome"></Column>
-		<Column field="email" header="E-mail"></Column>
-		<Column field="telefone" header="Telefone"></Column>
-		<Column field="data_cadastro" header="Data de cadastro"></Column>
-		<Column field="ativo" header="Ativo?"></Column>
-		<Column field="cidade" header="Cidade"></Column>
-		<Column field="estado" header="Estado"></Column>
-		<Column body={actionBodyTemplate} header="Actions" />
-		</DataTable>
+			<Dialog
+				header="Novo Cliente"
+				visible={showDialog}
+				style={{ width: '400px' }}
+				onHide={() => setShowDialog(false)}
+			>
+				<div className="p-fluid">
+					<label>Nome</label>
+					<InputText value={novoCliente.nome} onChange={e => setNovoCliente({ ...novoCliente, nome: e.target.value })} />
+
+					<label>Email</label>
+					<InputText value={novoCliente.email} onChange={e => setNovoCliente({ ...novoCliente, email: e.target.value })} />
+
+					<label>Telefone</label>
+					<InputText value={novoCliente.telefone} onChange={e => setNovoCliente({ ...novoCliente, telefone: e.target.value })} />
+
+					<label>Cidade</label>
+					<InputText value={novoCliente.cidade} onChange={e => setNovoCliente({ ...novoCliente, cidade: e.target.value })} />
+
+					<label>Estado</label>
+					<InputText value={novoCliente.estado} onChange={e => setNovoCliente({ ...novoCliente, estado: e.target.value })} />
+
+					<Button label="Salvar" className="p-mt-3" onClick={handleCreate} />
+				</div>
+			</Dialog>
+
+			<DataTable value={clients} paginator rows={10} stripedRows tableStyle={{ minWidth: '50rem' }}>
+				<Column field="id" header="ID" />
+				<Column field="nome" header="Nome" />
+				<Column field="email" header="E-mail" />
+				<Column field="telefone" header="Telefone" />
+				<Column field="data_cadastro" header="Data de cadastro" />
+				<Column field="ativo" header="Ativo?" />
+				<Column field="cidade" header="Cidade" />
+				<Column field="estado" header="Estado" />
+				<Column body={actionBodyTemplate} header="Ações" />
+			</DataTable>
 		</>
-	)
-}
+	);
+};
 
-export default ClientTablePage
+export default ClientTablePage;
