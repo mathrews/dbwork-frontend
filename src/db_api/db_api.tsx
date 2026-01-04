@@ -43,10 +43,15 @@ export async function createClient(client: ClientCreate): Promise<void> {
 	}
 }
 
-export async function updateClient(id: number, client: Partial<ClientCreate>): Promise<void> {
-	const res = await fetch(`${API_URL}/clientes/${id}`, {
-		method: 'PUT',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(client),
-	});
+// Atualizar cliente existente
+export async function updateClient(id: number, client: ClientCreate): Promise<void> {
+  const res = await fetch(`${API_URL}/clientes/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(client),
+  });
+
+  if (!res.ok) {
+    throw new Error('Erro ao atualizar cliente');
+  }
 }
