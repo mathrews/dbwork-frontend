@@ -2,7 +2,7 @@ export interface Client {
     id: number;
     nome: string;
     email: string;
-    telefone: string;
+    telefones: [string];
     data_cadastro: string;
     ativo: boolean;
     cidade: string;

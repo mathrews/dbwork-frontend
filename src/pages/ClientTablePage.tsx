@@ -65,7 +65,6 @@ const ClientTablePage = () => {
 				name="checkativos"
 				defaultChecked={true}
 				onChange={
-					// TOFIX: DOESN'T WORK
 					async e => {
 						setAtivos(Boolean(e.target.checked))
 						const newClients = await getClients(ativos)
@@ -89,7 +88,7 @@ const ClientTablePage = () => {
 		<Column field="id" header="ID"></Column>
 		<Column field="nome" header="Nome"></Column>
 		<Column field="email" header="E-mail"></Column>
-		<Column field="telefone" header="Telefone"></Column>
+		<Column field="telefones" header="Telefones"></Column>
 		<Column field="data_cadastro" header="Data de cadastro"></Column>
 		<Column field="ativo" header="Ativo?"></Column>
 		<Column field="cidade" header="Cidade"></Column>
