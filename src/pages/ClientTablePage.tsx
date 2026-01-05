@@ -6,6 +6,7 @@ import type { Client, ClientCreate } from '../types/Client';
 import { getClients, deleteClient, createClient, updateClient } from '../db_api/db_api';
 import { Dialog } from 'primereact/dialog';
 import { InputText } from 'primereact/inputtext';
+import {InputNumber} from 'primereact/inputnumber';
 
 const ClientTablePage = () => {
   const [clients, setClients] = useState<Client[]>([]);
@@ -14,10 +15,15 @@ const ClientTablePage = () => {
 
   const [novoCliente, setNovoCliente] = useState<ClientCreate>({
     nome: '',
+    idade: 0,
+    cpf: '',
     email: '',
-    telefone: '',
+    endereco: '',
     cidade: '',
     estado: '',
+    data_nascimento: '',
+    telefones: ['', ''],
+    ativo: true,
   });
 
   const [editCliente, setEditCliente] = useState<Client | null>(null);
@@ -66,7 +72,18 @@ const ClientTablePage = () => {
       }
 
       setShowDialog(false);
-      setNovoCliente({ nome: '', email: '', telefone: '', cidade: '', estado: '' });
+      setNovoCliente({
+        nome: '',
+        idade: 0,
+        cpf: '',
+        email: '',
+        endereco: '',
+        cidade: '',
+        estado: '',
+        data_nascimento: '',
+        telefones: ['', '']
+      });
+
       setEditCliente(null); // Limpa edição após salvar
     } catch (e) {
       console.error('Erro ao salvar cliente:', e);
@@ -105,12 +122,23 @@ const ClientTablePage = () => {
       <div style={{ display: 'flex', gap: '20px', height: '8rem', alignItems: 'center' }}>
         <h1>Tabela de Clientes</h1>
         <Button
-          label="Adicionar"
-          onClick={() => {
-            setNovoCliente({ nome: '', email: '', telefone: '', cidade: '', estado: '' });
-            setEditCliente(null);
-            setShowDialog(true);
-          }}
+        label="Adicionar"
+        onClick={() => {
+          setNovoCliente({
+            nome: '',
+            idade: 0,
+            cpf: '',
+            email: '',
+            endereco: '',
+            cidade: '',
+            estado: '',
+            data_nascimento: '',
+            telefones: ['', '']
+          });
+
+          setEditCliente(null);
+          setShowDialog(true);
+        }}
         />
       </div>
 
@@ -130,6 +158,24 @@ const ClientTablePage = () => {
             }}
           />
 
+          <label>Idade</label>
+          <InputNumber
+            value={clienteForm.idade}
+            onChange={e => {
+              if (editCliente) setEditCliente({ ...editCliente, idade: (e.value || 0) });
+              else setNovoCliente({ ...novoCliente, idade: (e.value || 0) });
+            }}
+	   />
+
+          <label>CPF</label>
+          <InputText
+            value={clienteForm.cpf}
+            onChange={e => {
+              if (editCliente) setEditCliente({ ...editCliente, cpf: e.target.value });
+              else setNovoCliente({ ...novoCliente, cpf: e.target.value });
+            }}
+          />
+
           <label>Email</label>
           <InputText
             value={clienteForm.email}
@@ -139,12 +185,12 @@ const ClientTablePage = () => {
             }}
           />
 
-          <label>Telefone</label>
+          <label>Endereço</label>
           <InputText
-            value={clienteForm.telefone}
+            value={clienteForm.endereco}
             onChange={e => {
-              if (editCliente) setEditCliente({ ...editCliente, telefone: e.target.value });
-              else setNovoCliente({ ...novoCliente, telefone: e.target.value });
+              if (editCliente) setEditCliente({ ...editCliente, endereco: e.target.value });
+              else setNovoCliente({ ...novoCliente, endereco: e.target.value });
             }}
           />
 
@@ -163,6 +209,25 @@ const ClientTablePage = () => {
             onChange={e => {
               if (editCliente) setEditCliente({ ...editCliente, estado: e.target.value });
               else setNovoCliente({ ...novoCliente, estado: e.target.value });
+            }}
+          />
+
+          <label>Data de Nascimento</label>
+          <InputText
+            value={clienteForm.data_nascimento}
+            onChange={e => {
+              if (editCliente) setEditCliente({ ...editCliente, data_nascimento: e.target.value });
+              else setNovoCliente({ ...novoCliente, data_nascimento: e.target.value });
+            }}
+          />
+
+          <label>Telefone</label>
+          <InputText
+            value={clienteForm.telefones[0]}
+            onChange={e => {
+              if (editCliente) setEditCliente({
+                ...editCliente, telefones: [e.target.value, ''] });
+              else setNovoCliente({ ...novoCliente, telefones: [e.target.value, ''] });
             }}
           />
 

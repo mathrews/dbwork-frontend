@@ -2,20 +2,27 @@
 export interface Client {
 	id: number;
 	nome: string;
+	idade: number;
+	cpf: string;
 	email: string;
-	telefone: string;
-	data_cadastro: string;
-	ativo: boolean;
+	endereco: string;
 	cidade: string;
 	estado: string;
+	data_nascimento: string;
+	telefones: [string, string];
+	ativo: boolean;
 }
 
-// Tipo usado para criar cliente (não precisa de id nem data_cadastro)
+// Tipo usado para criar cliente (não precisa de id)
 export interface ClientCreate {
 	nome: string;
+	idade: number;
+	cpf: string;
 	email: string;
-	telefone: string;
+	endereco: string;
 	cidade: string;
 	estado: string;
-	ativo?: boolean; // opcional, default true
+	data_nascimento: string;
+	telefones: [string, string];
+	ativo?: boolean;
 }

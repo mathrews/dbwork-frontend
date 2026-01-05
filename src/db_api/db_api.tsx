@@ -10,7 +10,7 @@ console.log('API_URL:', API_URL);
 // Buscar clientes, com filtro de ativos
 export async function getClients(filter: boolean): Promise<Client[]> {
 	const res = await fetch(
-		filter ? `${API_URL}/clientes?ativos=1` : `${API_URL}/clientes`
+		filter ? `${API_URL}/clientes?ativo=true` : `${API_URL}/clientes`
 	);
 
 	if (!res.ok) {
