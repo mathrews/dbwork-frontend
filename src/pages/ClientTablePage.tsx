@@ -9,6 +9,7 @@ import {
   createClient,
   updateClient,
 } from "../db_api/db_api";
+import { Checkbox } from "primereact/checkbox";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { InputNumber } from "primereact/inputnumber";
@@ -117,6 +118,23 @@ const ClientTablePage = () => {
     />
     </div>
   );
+
+  // depois substituir por um popup
+  const telefoneBodyTemplate = (rowData: Client) => { console.log(rowData); return (
+    <div>
+      {rowData.telefones.map((t, idx) => (
+        <div key={idx}>
+          {t.telefone} ({t.tipo})
+        </div>
+      ))}
+    </div>
+  )};
+
+  const ativoBodyTemplate = (rowData: Client) => { console.log(rowData); return (
+    <div>
+    {(rowData.ativo) ? "Sim" : "Não"}
+    </div>
+  )};
 
   const clienteForm = editCliente || novoCliente;
 
@@ -285,6 +303,7 @@ const ClientTablePage = () => {
     />
 
     <label>Telefone</label>
+
     {clienteForm.telefones.map((tel, idx) => (
       <div
       key={idx}
@@ -328,22 +347,40 @@ const ClientTablePage = () => {
       disabled={clienteForm.telefones.length === 1}
       />
       </div>
+
     ))}
 
+    <label>Data de Nascimento</label>
     <InputText
-    value={clienteForm.telefones[0].telefone}
+    value={clienteForm.data_nascimento}
     onChange={(e) => {
-      if (editCliente) {
+      if (editCliente)
         setEditCliente({
           ...editCliente,
-          telefones: [{telefone: e.target.value, tipo: ""}],
+          data_nascimento: e.target.value,
         });
-      } else {
-        setNovoCliente({
-          ...novoCliente,
-          telefones: [{telefone: e.target.value, tipo: ""}],
+        else
+          setNovoCliente({
+            ...novoCliente,
+            data_nascimento: e.target.value,
+          });
+    }}
+    />
+
+    <label>Ativo?</label>
+    <Checkbox
+    checked={clienteForm.ativo}
+    onChange={(e) => {
+      if (editCliente)
+        setEditCliente({
+          ...editCliente,
+          ativo: e.checked,
         });
-      }
+        else
+          setNovoCliente({
+            ...novoCliente,
+            ativo: e.checked,
+        });
     }}
     />
 
@@ -363,9 +400,9 @@ const ClientTablePage = () => {
     <Column field="idade" header="Idade" />
     <Column field="cpf" header="CPF" />
     <Column field="email" header="E-mail" />
-    <Column field="telefones" header="Telefone" />
+    <Column body={telefoneBodyTemplate} header="Telefone" />
     <Column field="data_nascimento" header="Data de Nascimento" />
-    <Column field="ativo" header="Ativo?" />
+    <Column body={ativoBodyTemplate} header="Ativo?" />
     <Column field="endereco" header="Endereço" />
     <Column field="cidade" header="Cidade" />
     <Column field="estado" header="Estado" />
