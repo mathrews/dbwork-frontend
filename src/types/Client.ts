@@ -1,3 +1,8 @@
+export interface Telefone {
+	telefone: string,
+	tipo: string
+}
+
 // Tipo completo do cliente (retorno do backend)
 export interface Client {
 	id: number;
@@ -9,7 +14,7 @@ export interface Client {
 	cidade: string;
 	estado: string;
 	data_nascimento: string;
-	telefones: [string, string];
+	telefones: Telefone[];
 	ativo: boolean;
 }
 
@@ -23,6 +28,6 @@ export interface ClientCreate {
 	cidade: string;
 	estado: string;
 	data_nascimento: string;
-	telefones: [string, string];
+	telefones: Telefone[];
 	ativo?: boolean;
 }
