@@ -228,14 +228,13 @@ const ClientTablePage = () => {
     <label>Idade</label>
     <InputNumber
     value={clienteForm.idade}
-    onChange={(e) => {
+    onValueChange={(e) => {
       if (editCliente)
         setEditCliente({ ...editCliente, idade: e.value ?? 0 });
       else setNovoCliente({ ...novoCliente, idade: e.value ?? 0 });
     }}
     />
 
-    DOESN'T WORK
     <label>CPF</label>
     <InputText
     value={clienteForm.cpf}
