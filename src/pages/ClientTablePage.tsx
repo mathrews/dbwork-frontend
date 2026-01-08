@@ -350,23 +350,6 @@ const ClientTablePage = () => {
 
     ))}
 
-    <label>Data de Nascimento</label>
-    <InputText
-    value={clienteForm.data_nascimento}
-    onChange={(e) => {
-      if (editCliente)
-        setEditCliente({
-          ...editCliente,
-          data_nascimento: e.target.value,
-        });
-        else
-          setNovoCliente({
-            ...novoCliente,
-            data_nascimento: e.target.value,
-          });
-    }}
-    />
-
     <label>Ativo?</label>
     <Checkbox
     checked={clienteForm.ativo}
