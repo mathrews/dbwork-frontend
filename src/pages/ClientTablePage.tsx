@@ -230,11 +230,12 @@ const ClientTablePage = () => {
     value={clienteForm.idade}
     onChange={(e) => {
       if (editCliente)
-        setEditCliente({ ...editCliente, idade: e.value || 0 });
-      else setNovoCliente({ ...novoCliente, idade: e.value || 0 });
+        setEditCliente({ ...editCliente, idade: e.value ?? 0 });
+      else setNovoCliente({ ...novoCliente, idade: e.value ?? 0 });
     }}
     />
 
+    DOESN'T WORK
     <label>CPF</label>
     <InputText
     value={clienteForm.cpf}
@@ -352,12 +353,12 @@ const ClientTablePage = () => {
 
     <label>Ativo?</label>
     <Checkbox
-    checked={clienteForm.ativo}
+    checked={clienteForm.ativo!}
     onChange={(e) => {
       if (editCliente)
         setEditCliente({
           ...editCliente,
-          ativo: e.checked,
+          ativo: e.checked!,
         });
         else
           setNovoCliente({
