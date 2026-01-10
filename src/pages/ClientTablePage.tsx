@@ -12,16 +12,14 @@ import {
 import { Checkbox } from "primereact/checkbox";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
-import { InputNumber } from "primereact/inputnumber";
 
 const ClientTablePage = () => {
   const [clients, setClients] = useState<Client[]>([]);
   const [ativos, setAtivos] = useState<boolean>(true);
   const [showDialog, setShowDialog] = useState(false);
-
   const [novoCliente, setNovoCliente] = useState<ClientCreate>({
     nome: "",
-    idade: 0,
+    idade: undefined,
     cpf: "",
     email: "",
     endereco: "",
@@ -72,11 +70,11 @@ const ClientTablePage = () => {
           ...prev,
           {
             ...novoCliente,
-            id: (prev.length == 0) ? 0 :
-              clients.reduce((prev, current) =>
-                             (prev && prev.id > current.id)
-                               ? prev : current).id + 1, // encontra o maior id até agora e incrementa
-                               ativo: true,
+            id: ((prev.length == 0) ? 0 :
+                 clients.reduce((prev, current) =>
+                                (prev && prev.id > current.id)
+                                  ? prev : current).id + 1), // encontra o maior id até agora e incrementa
+            ativo: true,
           },
         ]);
       }
@@ -84,7 +82,7 @@ const ClientTablePage = () => {
       setShowDialog(false);
       setNovoCliente({
         nome: "",
-        idade: 0,
+        idade: undefined,
         cpf: "",
         email: "",
         endereco: "",
@@ -192,7 +190,7 @@ const ClientTablePage = () => {
     onClick={() => {
       setNovoCliente({
         nome: "",
-        idade: 0,
+        idade: undefined,
         cpf: "",
         email: "",
         endereco: "",
@@ -222,16 +220,6 @@ const ClientTablePage = () => {
       if (editCliente)
         setEditCliente({ ...editCliente, nome: e.target.value });
       else setNovoCliente({ ...novoCliente, nome: e.target.value });
-    }}
-    />
-
-    <label>Idade</label>
-    <InputNumber
-    value={clienteForm.idade}
-    onValueChange={(e) => {
-      if (editCliente)
-        setEditCliente({ ...editCliente, idade: e.value ?? 0 });
-      else setNovoCliente({ ...novoCliente, idade: e.value ?? 0 });
     }}
     />
 
@@ -289,16 +277,21 @@ const ClientTablePage = () => {
     <InputText
     value={clienteForm.data_nascimento}
     onChange={(e) => {
+      let birth = Number(new Date(e.target.value))
+      let idade = ~~((Date.now() - birth) / (31557600000));
+
       if (editCliente)
         setEditCliente({
           ...editCliente,
           data_nascimento: e.target.value,
+          idade: idade
         });
-        else
-          setNovoCliente({
-            ...novoCliente,
-            data_nascimento: e.target.value,
-          });
+      else
+        setNovoCliente({
+          ...novoCliente,
+          data_nascimento: e.target.value,
+          idade: idade
+        });
     }}
     />
 
