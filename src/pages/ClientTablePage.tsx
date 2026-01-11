@@ -49,8 +49,9 @@ const ClientTablePage = () => {
   const handleSave = async () => {
     const clienteForm = editCliente || novoCliente;
 
-    if (!clienteForm.nome || !clienteForm.email) {
-      alert("Nome e email são obrigatórios!");
+    if (!clienteForm.nome || !clienteForm.email || !clienteForm.cpf
+      || !clienteForm.cpf || !clienteForm.data_nascimento) {
+      alert("Nome, email, CPF e data de nascimento são obrigatórios!");
       return;
     }
 
@@ -64,6 +65,16 @@ const ClientTablePage = () => {
                            )
                   );
       } else {
+        for (let cliente of clients) {
+          if (cliente.cpf == novoCliente.cpf) {
+            alert("O CPF já está cadastrado.");
+            return;
+          } else if (cliente.email == novoCliente.email) {
+            alert("O e-mail já está cadastrado.");
+            return;
+          }
+        }
+
         // Cria novo cliente
         await createClient(novoCliente);
         setClients((prev) => [
