@@ -81,7 +81,7 @@ const ClientTablePage = () => {
           ...prev,
           {
             ...novoCliente,
-            id: ((prev.length == 0) ? 0 :
+            id: ((prev.length == 0) ? 1 :
                  clients.reduce((prev, current) =>
                                 (prev && prev.id > current.id)
                                   ? prev : current).id + 1), // encontra o maior id até agora e incrementa
